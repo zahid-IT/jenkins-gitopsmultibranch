@@ -1,30 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Helm + Argo CD</title>
+  <meta charset="UTF-8">
+  <title>Helm + Argo CD Deployment</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; background-color: #f9f9f9; }
-    h1 { color: #2c3e50; }
-    p { font-size: 18px; color: #34495e; }
-    ul { color: #16a085; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+      color: #2c3e50;
+    }
+    header {
+      background-color: #16a085;
+      color: white;
+      padding: 20px 40px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: 36px;
+    }
+    h2 {
+      color: #2980b9;
+      margin-top: 30px;
+    }
+    section {
+      padding: 20px 40px;
+    }
+    ul {
+      list-style-type: square;
+      padding-left: 20px;
+    }
+    .footer {
+      background-color: #34495e;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+    }
+    .highlight {
+      color: #e74c3c;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <h1>Hello from Helm + Argo CD 🚀</h1>
-  <p>GitOps-based Kubernetes Deployment</p>
 
-  <h2>Features:</h2>
-  <ul>
-    <li>Automated deployment with Argo CD</li>
-    <li>Helm chart version control</li>
-    <li>Self-healing Kubernetes apps</li>
-  </ul>
+  <header>
+    <h1>Hello from Helm + Argo CD 🚀</h1>
+    <p>GitOps-based Kubernetes Deployment Demo</p>
+  </header>
 
-  <p>Deployed on multiple replicas for high availability.</p>
+  <section>
+    <h2>Deployment Details:</h2>
+    <ul>
+      <li>Namespace: <span class="highlight">nginx</span></li>
+      <li>Replicas: <span class="highlight">3</span></li>
+      <li>Service Type: <span class="highlight">NodePort</span></li>
+      <li>GitOps Tool: <span class="highlight">Argo CD</span></li>
+      <li>Package Manager: <span class="highlight">Helm</span></li>
+    </ul>
+  </section>
 
-  <footer>
-    <p>Powered by Helm + Argo CD</p>
-  </footer>
+  <section>
+    <h2>Features Demonstrated:</h2>
+    <ul>
+      <li>Automated deployment via Helm chart</li>
+      <li>Self-healing and automated sync with Argo CD</li>
+      <li>High availability with multiple replicas</li>
+      <li>Version control for infrastructure via Git</li>
+      <li>Easy rollback to previous versions</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Next Steps:</h2>
+    <ul>
+      <li>Modify <code>values.yaml</code> to scale replicas</li>
+      <li>Update app content in <code>index.html</code></li>
+      <li>Commit & push changes → Argo CD will auto-sync</li>
+      <li>Monitor deployment and health via Argo CD GUI</li>
+    </ul>
+  </section>
+
+  <div class="footer">
+    <p>Powered by <span class="highlight">Helm + Argo CD</span> | Kubernetes GitOps Demo</p>
+  </div>
+
 </body>
 </html>
 
