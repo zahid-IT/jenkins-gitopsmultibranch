@@ -2,7 +2,7 @@ replicaCount: 3
 
 image:
   repository: zahidbilal/helm-argocd
-  tag: v1
+  tag: v2
   pullPolicy: IfNotPresent
 
 service:
