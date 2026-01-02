@@ -1,0 +1,7 @@
+replicaCount: 3
+image:
+  repository: zahidbilal/gitops-jenkins
+  tag: "prod-latest"
+service:
+  type: LoadBalancer
+  port: 80
