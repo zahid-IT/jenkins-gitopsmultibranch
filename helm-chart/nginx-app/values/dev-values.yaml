@@ -1,0 +1,7 @@
+replicaCount: 1
+image:
+  repository: zahidbilal/gitops-jenkins
+  tag: "dev-latest"
+service:
+  type: NodePort
+  port: 80

@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx-staging
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/zahid-IT/jenkins-gitopsmultibranch.git'
+    targetRevision: staging
+    path: helm-chart/nginx-app
+    helm:
+      valueFiles:
+        - values/staging-values.yaml
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: staging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
