@@ -9,19 +9,6 @@ pipeline {
     }
 
     stages {
-        stage('Install Helm') {
-            steps {
-                script {
-                    sh '''
-                    # Helm install without sudo
-                    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | \
-                        bash -s -- --version v3.19.4 --no-sudo
-                    helm version
-                    '''
-                }
-            }
-        }
-
         stage('Checkout SCM') {
             steps {
                 checkout([$class: 'GitSCM', 
@@ -41,6 +28,7 @@ pipeline {
                     echo "Building Docker image for ${env.BRANCH_NAME}"
                     sh "docker build -t $DOCKER_REPO:$envTag ./app"
 
+                    // Use Jenkins credentials for DockerHub login
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", 
                                                       usernameVariable: 'DOCKER_USERNAME', 
                                                       passwordVariable: 'DOCKER_PASSWORD')]) {
