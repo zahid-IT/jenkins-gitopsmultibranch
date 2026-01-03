@@ -1,6 +1,11 @@
 
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'alpine/helm:3.12.0'  // Helm pre-installed
+            args '-u root:root'          // run as root
+        }
+    }
 
     environment {
         DOCKER_REPO = "zahidbilal/gitops-jenkins"
@@ -28,7 +33,6 @@ pipeline {
                     echo "Building Docker image for ${env.BRANCH_NAME}"
                     sh "docker build -t $DOCKER_REPO:$envTag ./app"
 
-                    // Use Jenkins credentials for DockerHub login
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}", 
                                                       usernameVariable: 'DOCKER_USERNAME', 
                                                       passwordVariable: 'DOCKER_PASSWORD')]) {
