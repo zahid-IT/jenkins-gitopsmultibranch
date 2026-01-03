@@ -13,7 +13,9 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+                    # Helm install without sudo
+                    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | \
+                        bash -s -- --version v3.19.4 --no-sudo
                     helm version
                     '''
                 }
