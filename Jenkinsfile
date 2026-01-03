@@ -15,8 +15,10 @@ pipeline {
                     echo "Building Docker image for ${env.BRANCH_NAME}"
                     sh "docker build -t $DOCKER_REPO:$envTag ./app"
 
-                    // Use Jenkins credentials for Docker login
-                    withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    // Fixed Docker login using Jenkins credentials
+                    withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS,
+                                                     usernameVariable: 'DOCKER_USERNAME',
+                                                     passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                         sh "docker push $DOCKER_REPO:$envTag"
                     }
