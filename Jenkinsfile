@@ -2,57 +2,75 @@
 pipeline {
     agent {
         kubernetes {
-            label 'docker-agent'
+            label 'kaniko-agent'
             yaml """
 apiVersion: v1
 kind: Pod
 spec:
   containers:
-  - name: docker
-    image: docker:24.0.5
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:latest
     command:
     - cat
     tty: true
     volumeMounts:
-    - name: docker-sock
-      mountPath: /var/run/docker.sock
+    - name: kaniko-secret
+      mountPath: /kaniko/.docker
   volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
+  - name: kaniko-secret
+    secret:
+      secretName: dockerhub-creds # Kubernetes secret with Docker credentials
 """
         }
     }
 
     environment {
         DOCKER_REPO = "zahidbilal/gitops-jenkins"
-        DOCKER_CREDENTIALS = "dockerhub-creds"
         GIT_CREDENTIALS = "github-creds"
+        // Note: BRANCH_NAME is provided by multibranch pipeline
     }
 
     stages {
         stage('Checkout SCM') {
             steps {
-                checkout scm
+                checkout([$class: 'GitSCM', 
+                          branches: [[name: "*/${env.BRANCH_NAME}"]],
+                          userRemoteConfigs: [[
+                              url: "https://github.com/zahid-IT/jenkins-gitopsmultibranch.git",
+                              credentialsId: "${GIT_CREDENTIALS}"
+                          ]]
+                ])
             }
         }
 
         stage('Build & Push Docker Image') {
             steps {
-                container('docker') {
+                container('kaniko') {
                     script {
-                        def envTag = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-                        sh "docker build -t $DOCKER_REPO:$envTag ./app"
+                        // Create unique tag for branch + build number
+                        def imageTag = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+                        echo "Building image: $DOCKER_REPO:$imageTag"
 
-                        withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS}",
-                                                          usernameVariable: 'DOCKER_USERNAME',
-                                                          passwordVariable: 'DOCKER_PASSWORD')]) {
-                            sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                            sh "docker push $DOCKER_REPO:$envTag"
-                        }
+                        sh """
+                        /kaniko/executor \
+                            --context \$WORKSPACE/app \
+                            --dockerfile \$WORKSPACE/app/Dockerfile \
+                            --destination $DOCKER_REPO:$imageTag \
+                            --destination $DOCKER_REPO:latest \
+                            --verbosity info
+                        """
                     }
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Docker image for ${env.BRANCH_NAME} pushed successfully!"
+        }
+        failure {
+            echo "❌ Docker image build/push failed!"
         }
     }
 }
