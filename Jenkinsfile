@@ -1,11 +1,6 @@
 
 pipeline {
-    agent {
-        docker {
-            image 'alpine/helm:3.12.0'  // Helm pre-installed
-            args '-u root:root'          // run as root
-        }
-    }
+    agent any
 
     environment {
         DOCKER_REPO = "zahidbilal/gitops-jenkins"
@@ -14,6 +9,17 @@ pipeline {
     }
 
     stages {
+        stage('Install Helm') {
+            steps {
+                script {
+                    sh '''
+                    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+                    helm version
+                    '''
+                }
+            }
+        }
+
         stage('Checkout SCM') {
             steps {
                 checkout([$class: 'GitSCM', 
